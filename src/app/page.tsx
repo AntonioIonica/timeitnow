@@ -22,19 +22,31 @@ export default function Home() {
   const [dailyStreak, setDailyStreak] = useState(() => {
     if (typeof window !== "undefined") {
       const savedStreak = localStorage.getItem("dailyStreak");
+      const lastUpdated = localStorage.getItem("lastUpdated");
 
-      return savedStreak ? parseInt(savedStreak) : 0;
+      if (savedStreak && lastUpdated) {
+        const now = new Date();
+        const lastUpdatedDate = new Date(parseInt(lastUpdated));
+
+        if (now.toDateString() !== lastUpdatedDate.toDateString()) {
+          localStorage.removeItem("dailyStreak");
+          localStorage.removeItem("lastUpdated");
+          return 0;
+        }
+
+        return parseInt(savedStreak);
+      }
+      return 0;
     }
     return 0;
   });
 
-  function handleToggleMute() {
-    setIsMuted((prev) => !prev);
-  }
-
   const playSound = useCallback(
     (sound: HTMLAudioElement) => {
-      if (!isMuted) sound.play();
+      if (!isMuted) {
+        sound.currentTime = 0;
+        sound.play();
+      }
     },
     [isMuted],
   );
@@ -49,6 +61,7 @@ export default function Home() {
       const timeoutId = setTimeout(() => {
         setDailyStreak(0);
         localStorage.removeItem("dailyStreak");
+        localStorage.removeItem("lastUpdated");
       }, timeUntilMidnight);
 
       return () => clearTimeout(timeoutId);
@@ -59,6 +72,7 @@ export default function Home() {
     function () {
       if (typeof window !== "undefined") {
         localStorage.setItem("dailyStreak", dailyStreak.toString());
+        localStorage.setItem("lastUpdated", new Date().getTime().toString());
       }
     },
     [dailyStreak],
@@ -90,6 +104,10 @@ export default function Home() {
     [isRunning, timeLeft, isBreak, playSound],
   );
 
+  function handleToggleMute() {
+    setIsMuted((prev) => !prev);
+  }
+
   function formatTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -97,10 +115,21 @@ export default function Home() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
+  function handleStart() {
+    setIsRunning(true);
+    playSound(clickSound);
+  }
+
+  function handlePause() {
+    setIsRunning(false);
+    playSound(typingSound);
+  }
+
   function handleReset() {
     setIsRunning(false);
     setIsBreak(false);
     setTimeLeft(WORK_DURATION);
+    playSound(warningSound);
   }
 
   return (
@@ -144,10 +173,7 @@ export default function Home() {
             <button
               type="button"
               disabled={isRunning}
-              onClick={() => {
-                setIsRunning(true);
-                clickSound.play();
-              }}
+              onClick={handleStart}
               className="mb-5 w-[25%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
             >
               Start
@@ -155,19 +181,13 @@ export default function Home() {
             <div className="flex w-[25%] flex-row items-center justify-between space-x-4">
               <button
                 className="mb-5 w-[48%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
-                onClick={() => {
-                  typingSound.play();
-                  setIsRunning(false);
-                }}
+                onClick={handlePause}
                 type="button"
               >
                 Pause
               </button>
               <button
-                onClick={() => {
-                  warningSound.play();
-                  handleReset();
-                }}
+                onClick={handleReset}
                 type="button"
                 className="mb-5 w-[48%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
               >
