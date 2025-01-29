@@ -1,6 +1,5 @@
 "use client";
 
-import MatrixBackground from "../components/MatrixBackground";
 import { useCallback, useEffect, useState } from "react";
 import {
   clickSound,
@@ -10,9 +9,11 @@ import {
   warningSound,
 } from "./lib/helpers";
 import DailyStreak from "@/components/streak/DailyStreak";
+import { Button } from "@/components/ui/button";
+import { useBackground } from "@/components/Background";
 
-const WORK_DURATION = 1 * 60;
-const BREAK_DURATION = 1 * 60;
+const WORK_DURATION = 0.2 * 60;
+const BREAK_DURATION = 0.2 * 60;
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState(WORK_DURATION);
@@ -40,6 +41,7 @@ export default function Home() {
     }
     return 0;
   });
+  const { changeBackground } = useBackground();
 
   const playSound = useCallback(
     (sound: HTMLAudioElement) => {
@@ -94,6 +96,7 @@ export default function Home() {
           setTimeLeft(WORK_DURATION);
           playSound(warningSound);
         } else {
+          changeBackground();
           setIsBreak(true);
           setTimeLeft(BREAK_DURATION);
           setDailyStreak((prev) => prev + 1);
@@ -101,7 +104,7 @@ export default function Home() {
       }
       return () => clearInterval(timer);
     },
-    [isRunning, timeLeft, isBreak, playSound],
+    [isRunning, timeLeft, isBreak, playSound, changeBackground],
   );
 
   function handleToggleMute() {
@@ -134,20 +137,19 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen">
-      <MatrixBackground />
       <div className="relative z-10 min-h-screen">
         <div className="flex h-screen">
           {/* Left Section */}
-          <section className="text-border z-10 flex w-1/4 items-center justify-center p-8">
-            <div className="max-w-md text-gray-100">
-              <h1 className="text-border text-5xl text-green-500">
+          <section className="z-10 flex w-1/4 items-center justify-center p-8 text-border">
+            <div className="max-w-md">
+              <h1 className="text-5xl text-border text-slate-300">
                 <button
                   type="button"
                   onClick={() => {
                     handleToggleMute();
                     if (isMuted) deploySound.play();
                   }}
-                  className="absolute right-5 top-5 rounded-lg bg-green-600 px-4 py-3 text-4xl font-medium text-black shadow-md hover:bg-green-800"
+                  className="absolute right-5 top-5 rounded-lg bg-green-600 px-4 py-3 text-3xl font-medium text-black shadow-md hover:bg-green-800"
                   aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
                 >
                   {isMuted ? "🔇" : "🔊"}
@@ -158,47 +160,48 @@ export default function Home() {
           </section>
 
           {/* Center Section - Pomodoro Timer */}
-          <section className="text-border flex w-1/2 flex-col items-center justify-center">
-            <h1 className="mb-7 text-5xl font-bold text-green-500">
+          <section className="flex w-1/2 flex-col items-center justify-center text-border">
+            <h1 className="mb-7 text-5xl font-bold text-slate-200">
               Pomodoro Timer
             </h1>
             <div
-              className={`mb-6 font-mono text-8xl ${isBreak ? "text-green-400" : "text-green-600"}`}
+              className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-200" : "text-slate-300"}`}
             >
               {formatTime(timeLeft)}
             </div>
-            <div className="mb-4 text-2xl font-medium text-green-500">
+            <div className="mb-4 text-2xl font-medium text-slate-300">
               {isBreak ? "Break Time!" : "Focus Time"}
             </div>
-            <button
+            <Button
               type="button"
               disabled={isRunning}
               onClick={handleStart}
-              className="mb-5 w-[25%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
+              className="mb-5 box-border w-[30%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-slate-600"
             >
               Start
-            </button>
-            <div className="flex w-[25%] flex-row items-center justify-between space-x-4">
-              <button
-                className="mb-5 w-[48%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
+            </Button>
+
+            <div className="flex flex-row items-center justify-between space-x-4">
+              <Button
+                className="mb-5 box-border w-[50%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-green-600"
                 onClick={handlePause}
                 type="button"
               >
                 Pause
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleReset}
                 type="button"
-                className="mb-5 w-[48%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-black shadow-md hover:bg-green-600"
+                className="mb-5 w-[50%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-green-600"
               >
                 Reset
-              </button>
+              </Button>
             </div>
           </section>
 
           {/* Right Section - Daily Streak */}
 
-          <section className="flex w-1/4 items-center justify-center p-8">
+          <section className="flex w-1/4 items-center justify-center border p-8">
             <div className="items-center justify-center">
               <div className="max-w-md">
                 <DailyStreak dailyStreak={dailyStreak} />

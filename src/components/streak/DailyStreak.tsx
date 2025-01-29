@@ -4,7 +4,7 @@ interface DailyStreakProps {
 
 function DailyStreak({ dailyStreak }: DailyStreakProps) {
   return (
-    <div className="text-border mb-2 text-5xl font-medium text-green-500">
+    <div className="mb-2 text-5xl font-medium text-border text-slate-300">
       Daily Streak: {dailyStreak}
     </div>
   );
