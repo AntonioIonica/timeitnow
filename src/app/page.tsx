@@ -11,11 +11,16 @@ import {
 import DailyStreak from "@/components/streak/DailyStreak";
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
+import TaskEstimator from "@/components/AI/TaskEstimator";
+import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 
-const WORK_DURATION = 0.2 * 60;
-const BREAK_DURATION = 0.2 * 60;
+const WORK_DURATION = 25 * 60;
+const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
+  const { estimatedTime } = useTaskEstimation();
+  console.log(typeof estimatedTime);
+  console.log(estimatedTime);
   const [timeLeft, setTimeLeft] = useState(WORK_DURATION);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
@@ -51,6 +56,22 @@ export default function Home() {
       }
     },
     [isMuted],
+  );
+
+  useEffect(
+    function () {
+      if (estimatedTime) {
+        const parsedTime = parseInt(estimatedTime, 10);
+        if (!isNaN(parsedTime) && parsedTime > 0) {
+          setTimeLeft(parsedTime);
+        } else {
+          setTimeLeft(WORK_DURATION);
+        }
+      } else {
+        setTimeLeft(WORK_DURATION);
+      }
+    },
+    [estimatedTime],
   );
 
   useEffect(function () {
@@ -93,7 +114,7 @@ export default function Home() {
         clearInterval(timer);
         if (isBreak) {
           setIsBreak(false);
-          setTimeLeft(WORK_DURATION);
+          setTimeLeft(+estimatedTime);
           playSound(warningSound);
         } else {
           changeBackground();
@@ -104,7 +125,7 @@ export default function Home() {
       }
       return () => clearInterval(timer);
     },
-    [isRunning, timeLeft, isBreak, playSound, changeBackground],
+    [isRunning, timeLeft, isBreak, playSound, changeBackground, estimatedTime],
   );
 
   function handleToggleMute() {
@@ -154,7 +175,7 @@ export default function Home() {
                 >
                   {isMuted ? "🔇" : "🔊"}
                 </button>
-                Settings
+                <TaskEstimator />
               </h1>
             </div>
           </section>
@@ -200,7 +221,6 @@ export default function Home() {
           </section>
 
           {/* Right Section - Daily Streak */}
-
           <section className="flex w-1/4 items-center justify-center border p-8">
             <div className="items-center justify-center">
               <div className="max-w-md">
