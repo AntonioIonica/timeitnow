@@ -19,8 +19,11 @@ const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
   const { estimatedTime } = useTaskEstimation();
-  console.log(typeof estimatedTime);
-  console.log(estimatedTime);
+
+  const [totalSessions, setTotalSessions] = useState(1);
+  const [currentSession, setCurrentSession] = useState(1);
+  const [totalTimeLeft, setTotalTimeLeft] = useState(WORK_DURATION);
+
   const [timeLeft, setTimeLeft] = useState(WORK_DURATION);
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
@@ -58,21 +61,25 @@ export default function Home() {
     [isMuted],
   );
 
-  useEffect(
-    function () {
-      if (estimatedTime) {
-        const parsedTime = parseInt(estimatedTime, 10);
-        if (!isNaN(parsedTime) && parsedTime > 0) {
-          setTimeLeft(parsedTime);
-        } else {
-          setTimeLeft(WORK_DURATION);
+  useEffect(() => {
+    if (estimatedTime) {
+      const totalSeconds = parseInt(estimatedTime, 10);
+
+      if (!isNaN(totalSeconds) && totalSeconds > 0) {
+        if (totalSeconds < WORK_DURATION) {
+          setTotalSessions(1);
+          setTimeLeft(totalSeconds);
+          setTotalTimeLeft(totalSeconds);
+          return;
         }
-      } else {
+
+        const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
+        setTotalSessions(numberOfSessions);
         setTimeLeft(WORK_DURATION);
+        setTotalTimeLeft(totalSeconds);
       }
-    },
-    [estimatedTime],
-  );
+    }
+  }, [estimatedTime]);
 
   useEffect(function () {
     if (typeof window !== "undefined") {
@@ -101,38 +108,91 @@ export default function Home() {
     [dailyStreak],
   );
 
-  useEffect(
-    function () {
-      let timer: NodeJS.Timeout;
+  const handleReset = useCallback(() => {
+    setIsRunning(false);
+    setIsBreak(false);
+    setCurrentSession(1);
 
-      if (isRunning && timeLeft > 0) {
-        timer = setInterval(() => {
-          setTimeLeft((prev) => prev - 1);
-        }, 1000);
-      } else if (isRunning && timeLeft < 1) {
-        playSound(successSound);
-        clearInterval(timer);
-        if (isBreak) {
-          setIsBreak(false);
-          setTimeLeft(+estimatedTime);
-          playSound(warningSound);
-        } else {
-          changeBackground();
-          setIsBreak(true);
-          setTimeLeft(BREAK_DURATION);
-          setDailyStreak((prev) => prev + 1);
-        }
+    if (estimatedTime) {
+      const totalSeconds = parseInt(estimatedTime, 10);
+
+      if (totalSeconds < WORK_DURATION) {
+        setTotalSessions(1);
+        setTimeLeft(totalSeconds);
+        setTotalTimeLeft(totalSeconds);
+      } else {
+        const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
+        setTotalSessions(numberOfSessions);
+        setTimeLeft(WORK_DURATION);
+        setTotalTimeLeft(totalSeconds);
       }
-      return () => clearInterval(timer);
-    },
-    [isRunning, timeLeft, isBreak, playSound, changeBackground, estimatedTime],
-  );
+    }
+    playSound(warningSound);
+  }, [estimatedTime, playSound]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isRunning && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+        setTotalTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (isRunning && timeLeft === 0) {
+      playSound(successSound);
+
+      if (parseInt(estimatedTime, 10) < WORK_DURATION) {
+        handleReset();
+        return;
+      }
+
+      if (isBreak) {
+        setIsBreak(false);
+        if (currentSession < totalSessions) {
+          const remainingSeconds = totalTimeLeft - BREAK_DURATION;
+          const nextSessionDuration =
+            currentSession === totalSessions - 1
+              ? remainingSeconds
+              : Math.min(WORK_DURATION, remainingSeconds);
+
+          setTimeLeft(nextSessionDuration);
+          setCurrentSession((prev) => prev + 1);
+        } else {
+          handleReset();
+        }
+      } else {
+        changeBackground();
+        setIsBreak(true);
+        setTimeLeft(BREAK_DURATION);
+      }
+    }
+
+    return () => clearInterval(timer);
+  }, [
+    isRunning,
+    timeLeft,
+    isBreak,
+    currentSession,
+    totalSessions,
+    totalTimeLeft,
+    playSound,
+    changeBackground,
+    estimatedTime,
+    handleReset,
+  ]);
 
   function handleToggleMute() {
     setIsMuted((prev) => !prev);
   }
 
   function formatTime(seconds: number) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
+
+  function formatTotalTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
 
@@ -147,13 +207,6 @@ export default function Home() {
   function handlePause() {
     setIsRunning(false);
     playSound(typingSound);
-  }
-
-  function handleReset() {
-    setIsRunning(false);
-    setIsBreak(false);
-    setTimeLeft(WORK_DURATION);
-    playSound(warningSound);
   }
 
   return (
@@ -181,47 +234,58 @@ export default function Home() {
           </section>
 
           {/* Center Section - Pomodoro Timer */}
-          <section className="flex w-1/2 flex-col items-center justify-center text-border">
-            <h1 className="mb-7 text-5xl font-bold text-slate-200">
-              Pomodoro Timer
-            </h1>
-            <div
-              className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-200" : "text-slate-300"}`}
-            >
-              {formatTime(timeLeft)}
-            </div>
-            <div className="mb-4 text-2xl font-medium text-slate-300">
-              {isBreak ? "Break Time!" : "Focus Time"}
-            </div>
-            <Button
-              type="button"
-              disabled={isRunning}
-              onClick={handleStart}
-              className="mb-5 box-border w-[30%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-slate-600"
-            >
-              Start
-            </Button>
+          <section className="flex w-1/2 flex-col items-center justify-center">
+            <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
+              <h1 className="mb-7 text-5xl font-bold text-slate-200">
+                Pomodoro Timer
+              </h1>
+              {parseInt(estimatedTime, 10) >= WORK_DURATION && (
+                <div className="mb-4 text-xl text-slate-100">
+                  Session {currentSession} of {totalSessions}
+                  {isBreak ? " (Break)" : ""}
+                </div>
+              )}
+              {estimatedTime && +estimatedTime > WORK_DURATION && (
+                <div className="mb-4 text-lg text-slate-100">
+                  Total Time Remaining: {formatTotalTime(totalTimeLeft)}
+                </div>
+              )}
+              <div
+                className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-200" : "text-slate-300"}`}
+              >
+                {formatTime(timeLeft)}
+              </div>
+              <Button
+                type="button"
+                disabled={isRunning}
+                onClick={handleStart}
+                className="mb-5 w-[40%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+              >
+                Start
+              </Button>
 
-            <div className="flex flex-row items-center justify-between space-x-4">
-              <Button
-                className="mb-5 box-border w-[50%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-green-600"
-                onClick={handlePause}
-                type="button"
-              >
-                Pause
-              </Button>
-              <Button
-                onClick={handleReset}
-                type="button"
-                className="mb-5 w-[50%] rounded-lg bg-green-500 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md hover:bg-green-600"
-              >
-                Reset
-              </Button>
+              <div className="flex w-[40%] flex-row items-center justify-between">
+                <Button
+                  className="mb-5 w-[48%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+                  onClick={handlePause}
+                  type="button"
+                  disabled={!isRunning}
+                >
+                  Pause
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  type="button"
+                  className="mb-5 w-[48%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+                >
+                  Reset
+                </Button>
+              </div>
             </div>
           </section>
 
           {/* Right Section - Daily Streak */}
-          <section className="flex w-1/4 items-center justify-center border p-8">
+          <section className="flex w-1/4 items-center justify-center p-8">
             <div className="items-center justify-center">
               <div className="max-w-md">
                 <DailyStreak dailyStreak={dailyStreak} />
