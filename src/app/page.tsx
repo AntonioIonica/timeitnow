@@ -18,7 +18,12 @@ const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
-  const { estimatedTime } = useTaskEstimation();
+  const { tasks, activeTaskIndex } = useTaskEstimation();
+  const activeTask =
+    activeTaskIndex !== null && tasks[activeTaskIndex]
+      ? tasks[activeTaskIndex]
+      : null;
+  const estimatedTime = activeTask ? activeTask.estimatedTime : 0;
 
   const [totalSessions, setTotalSessions] = useState(1);
   const [currentSession, setCurrentSession] = useState(1);
@@ -28,7 +33,7 @@ export default function Home() {
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [dailyStreak, setDailyStreak] = useState(() => {
+  const [dailyStreak, setDailyStreak] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const savedStreak = localStorage.getItem("dailyStreak");
       const lastUpdated = localStorage.getItem("lastUpdated");
@@ -63,7 +68,7 @@ export default function Home() {
 
   useEffect(() => {
     if (estimatedTime) {
-      const totalSeconds = parseInt(estimatedTime, 10);
+      const totalSeconds = estimatedTime;
 
       if (!isNaN(totalSeconds) && totalSeconds > 0) {
         if (totalSeconds < WORK_DURATION) {
@@ -78,6 +83,11 @@ export default function Home() {
         setTimeLeft(WORK_DURATION);
         setTotalTimeLeft(totalSeconds);
       }
+    } else {
+      // No active task: reset the timer to the initial work duration.
+      setTotalSessions(1);
+      setTimeLeft(WORK_DURATION);
+      setTotalTimeLeft(WORK_DURATION);
     }
   }, [estimatedTime]);
 
@@ -114,18 +124,19 @@ export default function Home() {
     setCurrentSession(1);
 
     if (estimatedTime) {
-      const totalSeconds = parseInt(estimatedTime, 10);
-
-      if (totalSeconds < WORK_DURATION) {
-        setTotalSessions(1);
-        setTimeLeft(totalSeconds);
-        setTotalTimeLeft(totalSeconds);
-      } else {
-        const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
-        setTotalSessions(numberOfSessions);
-        setTimeLeft(WORK_DURATION);
-        setTotalTimeLeft(totalSeconds);
-      }
+      const totalSeconds = estimatedTime;
+      // Compute total sessions for display purposes
+      const numberOfSessions =
+        totalSeconds < WORK_DURATION
+          ? 1
+          : Math.ceil(totalSeconds / WORK_DURATION);
+      setTotalSessions(numberOfSessions);
+      // Reset both timer counts to the full initial estimated time.
+      setTimeLeft(totalSeconds);
+      setTotalTimeLeft(totalSeconds);
+    } else {
+      setTimeLeft(WORK_DURATION);
+      setTotalTimeLeft(WORK_DURATION);
     }
     playSound(warningSound);
   }, [estimatedTime, playSound]);
@@ -140,8 +151,9 @@ export default function Home() {
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
       playSound(successSound);
+      setDailyStreak((prev) => prev + 1);
 
-      if (parseInt(estimatedTime, 10) < WORK_DURATION) {
+      if (estimatedTime < WORK_DURATION) {
         handleReset();
         return;
       }
@@ -223,7 +235,7 @@ export default function Home() {
                     handleToggleMute();
                     if (isMuted) deploySound.play();
                   }}
-                  className="absolute right-5 top-5 rounded-lg bg-green-600 px-4 py-3 text-3xl font-medium text-black shadow-md hover:bg-green-800"
+                  className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
                   aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
                 >
                   {isMuted ? "🔇" : "🔊"}
@@ -236,16 +248,16 @@ export default function Home() {
           {/* Center Section - Pomodoro Timer */}
           <section className="flex w-1/2 flex-col items-center justify-center">
             <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
-              <h1 className="mb-7 text-5xl font-bold text-slate-200">
+              <h1 className="mb-7 text-5xl font-bold text-slate-300">
                 Pomodoro Timer
               </h1>
-              {parseInt(estimatedTime, 10) >= WORK_DURATION && (
+              {totalSessions > 1 && (
                 <div className="mb-4 text-xl text-slate-100">
                   Session {currentSession} of {totalSessions}
                   {isBreak ? " (Break)" : ""}
                 </div>
               )}
-              {estimatedTime && +estimatedTime > WORK_DURATION && (
+              {totalTimeLeft > WORK_DURATION && (
                 <div className="mb-4 text-lg text-slate-100">
                   Total Time Remaining: {formatTotalTime(totalTimeLeft)}
                 </div>
@@ -286,7 +298,7 @@ export default function Home() {
 
           {/* Right Section - Daily Streak */}
           <section className="flex w-1/4 items-center justify-center p-8">
-            <div className="items-center justify-center">
+            <div className="flex flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
               <div className="max-w-md">
                 <DailyStreak dailyStreak={dailyStreak} />
               </div>
