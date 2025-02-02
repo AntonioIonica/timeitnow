@@ -57,8 +57,8 @@ export default function Home() {
   const { changeBackground } = useBackground();
 
   const playSound = useCallback(
-    (sound: HTMLAudioElement) => {
-      if (!isMuted) {
+    (sound: HTMLAudioElement | null) => {
+      if (!isMuted && sound) {
         sound.currentTime = 0;
         sound.play();
       }
