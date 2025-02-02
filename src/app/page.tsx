@@ -233,7 +233,7 @@ export default function Home() {
                   type="button"
                   onClick={() => {
                     handleToggleMute();
-                    if (isMuted) deploySound.play();
+                    if (isMuted && deploySound) deploySound.play();
                   }}
                   className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
                   aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
