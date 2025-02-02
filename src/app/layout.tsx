@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PomoNow Timer | AI",
+  title: "NowPomodoro | AI",
   description: "Many breaks the key to your success!",
 };
 
