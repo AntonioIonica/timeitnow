@@ -38,8 +38,6 @@ export default function TaskEstimator() {
       const data = await response.json();
       const estimatedTime: number = parseInt(data.estimatedTime) || 0;
 
-      console.log("Received estimatedTime:", estimatedTime);
-
       if (estimatedTime > 0) {
         if (typingSound) {
           typingSound.currentTime = 0;
