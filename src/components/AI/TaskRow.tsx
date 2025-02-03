@@ -67,7 +67,7 @@ export default function TaskRow({
       <button
         type="button"
         onClick={onDelete}
-        className="rounded bg-red-500 px-2 py-1 text-sm text-white"
+        className="ml-1 rounded bg-red-500 px-2 py-1 text-sm text-white"
         aria-label={`Delete task ${task.text}`}
       >
         Delete

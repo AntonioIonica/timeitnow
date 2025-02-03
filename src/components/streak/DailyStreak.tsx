@@ -7,10 +7,9 @@ function DailyStreak({ dailyStreak }: DailyStreakProps) {
     <div className="mb-2 text-4xl font-medium text-border text-slate-200">
       Daily Streak:
       <br />
-      <span className="flex items-center justify-center pt-3">
+      <span className="flex items-center justify-center pt-4">
         {dailyStreak}
       </span>
-      <br />
     </div>
   );
 }

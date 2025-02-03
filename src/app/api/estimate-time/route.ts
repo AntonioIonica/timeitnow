@@ -33,11 +33,21 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `You are an AI specialized in tasks and productivity using Pomodoro technique that estimates the time needed to complete tasks. Your output should be only the seconds estimated for the task, without any other explanation and without declaring seconds at the end. The format should be: "$", where $ is the number of seconds. Estimate time I would need for this task: ${taskDescription}.`;
+    const prompt = `You are an AI specialized in tasks and productivity using the Pomodoro technique that estimates the time needed to complete tasks. Your output should be only the seconds (a number) estimated for the task, without any additional text. For example, if the task should take 300 seconds, simply output 300. Estimate the time I need for this task: ${taskDescription}.`;
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const estimatedTime = response.text();
+    const responseText = result.response.text();
+
+    // Regex
+    const digitsMatch = responseText.match(/\d+/);
+    const estimatedTime = digitsMatch ? parseInt(digitsMatch[0], 10) : 0;
+
+    if (estimatedTime <= 0) {
+      return NextResponse.json(
+        { error: "Invalid estimated time" },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({ taskDescription, estimatedTime });
   } catch (error) {

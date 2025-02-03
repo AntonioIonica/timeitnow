@@ -17,7 +17,7 @@ export default function TaskEstimator() {
   const { tasks, activeTaskIndex, addTask, completeTask, deleteTask } =
     useTaskEstimation();
 
-  const handleEstimate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleEstimate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!taskInput.trim()) return;
     setLoading(true);
@@ -49,28 +49,31 @@ export default function TaskEstimator() {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
-      <h2 className="mb-4 text-xl font-bold text-slate-100">
-        -AI tasks time estimator:
+    <div className="w-full rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
+      <h2 className="mb-4 text-2xl font-bold text-slate-100">
+        Tasks estimator:
       </h2>
       {/* Input area for new task */}
-      <div className="mb-6 flex flex-row items-center justify-between">
+      <form
+        onSubmit={handleEstimate}
+        className="mb-6 flex flex-row items-center justify-between"
+      >
         <input
           type="text"
           value={taskInput}
           onChange={(e) => setTaskInput(e.target.value)}
-          placeholder="Task..."
+          placeholder="New Task..."
           className="font-sm h-[2rem] w-[80%] rounded px-2 text-sm text-gray-700"
         />
         <button
           type="submit"
-          onClick={handleEstimate}
           className="text-lg disabled:opacity-50"
           disabled={loading}
+          aria-label="Add task"
         >
           {!loading ? "➕" : "🔃"}
         </button>
-      </div>
+      </form>
       {/* Scheduled task list */}
       {tasks.length > 0 && (
         <div className="space-y-2 text-sm">

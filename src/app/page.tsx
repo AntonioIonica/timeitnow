@@ -220,32 +220,33 @@ export default function Home() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative box-border min-h-screen">
       <div className="relative z-10 min-h-screen">
-        <div className="flex h-screen">
-          {/* Left Section */}
-          <section className="z-10 flex w-1/4 items-center justify-center p-8 text-border">
-            <div className="max-w-md">
-              <h1 className="text-5xl text-border text-slate-100">
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleToggleMute();
-                    if (!isMuted && deploySound) deploySound.play();
-                  }}
-                  className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
-                  aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
-                >
-                  {isMuted ? "🔇" : "🔊"}
-                </button>
+        <div className="flex h-screen w-screen">
+          <button
+            type="button"
+            onClick={() => {
+              handleToggleMute();
+              if (isMuted && deploySound) deploySound.play();
+            }}
+            className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
+            aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
+          >
+            {isMuted ? "🔇" : "🔊"}
+          </button>
+
+          {/* Left Section: occupies 1/4 of screen width */}
+          <section className="flex w-1/4 flex-shrink-0 items-center justify-center text-border">
+            <div className="relative mx-10 w-full">
+              <div className="text-5xl text-border text-slate-100">
                 <TaskEstimator />
-              </h1>
+              </div>
             </div>
           </section>
 
           {/* Center Section - Pomodoro Timer */}
           <section className="flex w-1/2 flex-col items-center justify-center">
-            <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
+            <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm">
               <h1 className="mb-7 text-5xl font-bold text-slate-100">
                 Pomodoro Timer
               </h1>
@@ -295,10 +296,12 @@ export default function Home() {
           </section>
 
           {/* Right Section - Daily Streak */}
-          <section className="flex w-1/4 items-center justify-center p-8">
-            <div className="flex flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
-              <div className="max-w-md">
-                <DailyStreak dailyStreak={dailyStreak} />
+          <section className="flex w-1/4 flex-shrink-0 items-center justify-center text-border">
+            <div className="relative mx-10 w-full">
+              <div className="flex flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
+                <div className="max-w-md">
+                  <DailyStreak dailyStreak={dailyStreak} />
+                </div>
               </div>
             </div>
           </section>
