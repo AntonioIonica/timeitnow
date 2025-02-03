@@ -8,8 +8,8 @@ import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 
-const WORK_DURATION = 25 * 60;
-const BREAK_DURATION = 5 * 60;
+const WORK_DURATION = 0.5 * 60;
+const BREAK_DURATION = 0.2 * 60;
 
 export default function Home() {
   const { tasks, activeTaskIndex } = useTaskEstimation();
@@ -53,6 +53,14 @@ export default function Home() {
     return 0;
   });
 
+  // possible fix for substracting the break-duration from totaltimeleft
+  const [initialTotalWorkTime, setInitialTotalWorkTime] =
+    useState(WORK_DURATION);
+  const [accumulatedWorkElapsed, setAccumulatedWorkElapsed] = useState(0);
+  const [currentWorkSessionDuration, setCurrentWorkSessionDuration] =
+    useState(WORK_DURATION);
+  const [sessionEnd, setSessionEnd] = useState(null);
+
   const playSound = useCallback(
     (sound: HTMLAudioElement | null) => {
       if (!isMuted && sound) {
@@ -64,11 +72,9 @@ export default function Home() {
   );
 
   useEffect(() => {
-    console.log("estimatedTime changed", estimatedTime);
-
     if (estimatedTime && estimatedTime > 0) {
       const totalSeconds = parseInt(String(estimatedTime));
-      console.log("Processing totalSeconds", totalSeconds);
+
       setIsRunning(false);
 
       if (!isNaN(totalSeconds) && totalSeconds > 0) {
@@ -85,7 +91,7 @@ export default function Home() {
       }
     } else {
       // No active task: reset the timer to the initial work duration.
-      console.log("Resetting to default duration"); // Debug log
+
       setTotalSessions(1);
       setTimeLeft(WORK_DURATION);
       setTotalTimeLeft(WORK_DURATION);
@@ -148,36 +154,35 @@ export default function Home() {
 
     if (isRunning && timeLeft > 0) {
       timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-        setTotalTimeLeft((prev) => prev - 1);
+        // possible sync timing
+        const timestamp = Date.now();
+        setTimeLeft((prev) => Math.max(0, prev - 1));
+        setTotalTimeLeft((prev) => Math.max(0, prev - 1));
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
       playSound(successSound);
-      setDailyStreak((prev) => prev + 1);
 
-      if (estimatedTime < WORK_DURATION) {
-        handleReset();
-        return;
+      if (!isBreak && totalTimeLeft === 0) {
+        setDailyStreak((prev) => prev + 1);
       }
 
       if (isBreak) {
         setIsBreak(false);
         if (currentSession < totalSessions) {
-          const remainingSeconds = totalTimeLeft - BREAK_DURATION;
+          const remainingSeconds = totalTimeLeft; // could add - BREAK_DURATION
           const nextSessionDuration =
             currentSession === totalSessions - 1
               ? remainingSeconds
               : Math.min(WORK_DURATION, remainingSeconds);
-
           setTimeLeft(nextSessionDuration);
           setCurrentSession((prev) => prev + 1);
         } else {
           handleReset();
         }
       } else {
-        changeBackground();
-        setIsBreak(true);
         setTimeLeft(BREAK_DURATION);
+        setIsBreak(true);
+        changeBackground();
       }
     }
 
@@ -255,17 +260,23 @@ export default function Home() {
               <h1 className="mb-7 text-5xl font-bold text-slate-100">
                 Pomodoro Timer
               </h1>
-              {totalSessions > 1 && (
-                <div className="mb-4 text-xl text-slate-100">
-                  Session {currentSession} of {totalSessions}
-                  {isBreak ? " (Break)" : ""}
-                </div>
-              )}
-              {totalTimeLeft > WORK_DURATION && (
-                <div className="mb-4 text-lg text-slate-100">
-                  Total Time Remaining: {formatTotalTime(totalTimeLeft)}
-                </div>
-              )}
+              {estimatedTime > 1 &&
+                totalTimeLeft >= WORK_DURATION &&
+                totalSessions > 1 && (
+                  <div className="mb-4 text-xl text-slate-100">
+                    Session {currentSession} of {totalSessions}
+                  </div>
+                )}
+              <div className="py-3 text-lg text-slate-100 underline">
+                {isBreak ? "( Break Time )" : "( Work Time )"}
+              </div>
+              {/* {estimatedTime > 1 &&
+                totalTimeLeft >= WORK_DURATION &&
+                totalSessions > 1 && (
+                  <div className="mb-4 text-lg text-slate-100">
+                    Total Time Remaining: {formatTotalTime(totalTimeLeft)}
+                  </div>
+                )} */}
               <div
                 className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-100" : "text-slate-100"}`}
               >
