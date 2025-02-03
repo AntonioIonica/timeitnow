@@ -1,18 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  clickSound,
-  deploySound,
-  successSound,
-  typingSound,
-  warningSound,
-} from "./lib/helpers";
 import DailyStreak from "@/components/streak/DailyStreak";
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
 import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
+import { useSounds } from "@/components/hooks/useSounds";
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
@@ -24,6 +18,10 @@ export default function Home() {
       ? tasks[activeTaskIndex]
       : null;
   const estimatedTime = activeTask ? activeTask.estimatedTime : 0;
+
+  const { deploySound, clickSound, successSound, typingSound, warningSound } =
+    useSounds();
+  const { changeBackground } = useBackground();
 
   const [totalSessions, setTotalSessions] = useState(1);
   const [currentSession, setCurrentSession] = useState(1);
@@ -54,7 +52,6 @@ export default function Home() {
     }
     return 0;
   });
-  const { changeBackground } = useBackground();
 
   const playSound = useCallback(
     (sound: HTMLAudioElement | null) => {
@@ -139,7 +136,7 @@ export default function Home() {
       setTotalTimeLeft(WORK_DURATION);
     }
     playSound(warningSound);
-  }, [estimatedTime, playSound]);
+  }, [estimatedTime, playSound, warningSound]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -191,6 +188,7 @@ export default function Home() {
     changeBackground,
     estimatedTime,
     handleReset,
+    successSound,
   ]);
 
   function handleToggleMute() {
@@ -228,12 +226,12 @@ export default function Home() {
           {/* Left Section */}
           <section className="z-10 flex w-1/4 items-center justify-center p-8 text-border">
             <div className="max-w-md">
-              <h1 className="text-5xl text-border text-slate-300">
+              <h1 className="text-5xl text-border text-slate-100">
                 <button
                   type="button"
                   onClick={() => {
                     handleToggleMute();
-                    if (isMuted && deploySound) deploySound.play();
+                    if (!isMuted && deploySound) deploySound.play();
                   }}
                   className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
                   aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
@@ -248,7 +246,7 @@ export default function Home() {
           {/* Center Section - Pomodoro Timer */}
           <section className="flex w-1/2 flex-col items-center justify-center">
             <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
-              <h1 className="mb-7 text-5xl font-bold text-slate-300">
+              <h1 className="mb-7 text-5xl font-bold text-slate-100">
                 Pomodoro Timer
               </h1>
               {totalSessions > 1 && (
@@ -263,7 +261,7 @@ export default function Home() {
                 </div>
               )}
               <div
-                className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-200" : "text-slate-300"}`}
+                className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-100" : "text-slate-100"}`}
               >
                 {formatTime(timeLeft)}
               </div>

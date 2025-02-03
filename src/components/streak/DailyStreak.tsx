@@ -11,9 +11,6 @@ function DailyStreak({ dailyStreak }: DailyStreakProps) {
         {dailyStreak}
       </span>
       <br />
-      <span className="flex items-center justify-center">
-        {new Date().toLocaleDateString()}
-      </span>
     </div>
   );
 }

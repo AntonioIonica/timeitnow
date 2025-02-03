@@ -4,10 +4,10 @@ import Image from "next/image";
 import { createContext, useContext, useState, useCallback } from "react";
 
 const images = [
-  { name: "ballon", src: "/backgrounds/baloon.jpg" },
-  { name: "caban", src: "/backgrounds/caban.jpg" },
-  { name: "park", src: "/backgrounds/park.jpg" },
-  { name: "rice", src: "/backgrounds/rice.jpg" },
+  { alt: "ballon", src: "/backgrounds/baloon.jpg" },
+  { alt: "caban", src: "/backgrounds/caban.jpg" },
+  { alt: "park", src: "/backgrounds/park.jpg" },
+  { alt: "rice", src: "/backgrounds/rice.jpg" },
 ];
 
 type BackgroundContextType = {
@@ -22,9 +22,7 @@ export function BackgroundProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currentIndex, setCurrentIndex] = useState(
-    Math.floor(Math.random() * images.length),
-  );
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const changeBackground = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -52,7 +50,7 @@ function Background() {
     <div className="fixed inset-0 -z-50 h-screen w-screen">
       <Image
         src={images[currentIndex].src}
-        alt={images[currentIndex].name}
+        alt={images[currentIndex].alt}
         fill
         priority
         className="object-cover transition-opacity duration-1000"
