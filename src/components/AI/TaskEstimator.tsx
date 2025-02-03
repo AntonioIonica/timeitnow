@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useTaskEstimation } from "../contexts/TaskEstimatorContext";
 import TaskRow from "./TaskRow";
+import { useSounds } from "../hooks/useSounds";
 
 export interface Task {
   id: number;
@@ -16,6 +17,7 @@ export default function TaskEstimator() {
   const [loading, setLoading] = useState(false);
   const { tasks, activeTaskIndex, addTask, completeTask, deleteTask } =
     useTaskEstimation();
+  const { typingSound } = useSounds();
 
   const handleEstimate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,7 +36,17 @@ export default function TaskEstimator() {
       const response = await fetch("/api/estimate-time", options);
 
       const data = await response.json();
-      const estimatedTime: number = data.estimatedTime || 0;
+      const estimatedTime: number = parseInt(data.estimatedTime) || 0;
+
+      console.log("Received estimatedTime:", estimatedTime);
+
+      if (estimatedTime > 0) {
+        if (typingSound) {
+          typingSound.currentTime = 0;
+          typingSound.play();
+        }
+      }
+
       addTask({
         id: Date.now(),
         text: taskInput,

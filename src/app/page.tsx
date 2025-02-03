@@ -64,27 +64,32 @@ export default function Home() {
   );
 
   useEffect(() => {
-    if (estimatedTime) {
-      const totalSeconds = estimatedTime;
+    console.log("estimatedTime changed", estimatedTime);
+
+    if (estimatedTime && estimatedTime > 0) {
+      const totalSeconds = parseInt(String(estimatedTime));
+      console.log("Processing totalSeconds", totalSeconds);
+      setIsRunning(false);
 
       if (!isNaN(totalSeconds) && totalSeconds > 0) {
         if (totalSeconds < WORK_DURATION) {
           setTotalSessions(1);
           setTimeLeft(totalSeconds);
           setTotalTimeLeft(totalSeconds);
-          return;
+        } else {
+          const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
+          setTotalSessions(numberOfSessions);
+          setTimeLeft(WORK_DURATION);
+          setTotalTimeLeft(totalSeconds);
         }
-
-        const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
-        setTotalSessions(numberOfSessions);
-        setTimeLeft(WORK_DURATION);
-        setTotalTimeLeft(totalSeconds);
       }
     } else {
       // No active task: reset the timer to the initial work duration.
+      console.log("Resetting to default duration"); // Debug log
       setTotalSessions(1);
       setTimeLeft(WORK_DURATION);
       setTotalTimeLeft(WORK_DURATION);
+      setIsRunning(false);
     }
   }, [estimatedTime]);
 
