@@ -239,21 +239,21 @@ export default function Home() {
   return (
     <div className="relative box-border min-h-screen">
       <div className="relative z-10 min-h-screen">
-        <div className="flex h-screen w-screen">
+        <div className="flex h-screen w-screen flex-col space-y-4 md:flex-row">
           <Button
             onClick={() => {
               handleToggleMute();
               if (isMuted && deploySound) deploySound.play();
             }}
             // className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
-            className="absolute right-5 top-5 rounded-xl bg-white/30 py-6 text-2xl shadow-md backdrop-blur-sm"
+            className="absolute right-1 top-1 rounded-xl bg-white/30 px-[1px] py-[1px] text-2xl shadow-md backdrop-blur-sm md:right-5 md:top-5 md:px-4 md:py-6"
             aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
           >
             {isMuted ? "🔇" : "🔊"}
           </Button>
 
           {/* Left Section: occupies 1/4 of screen width */}
-          <section className="flex w-1/4 flex-shrink-0 items-center justify-center text-border">
+          <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:w-1/4">
             <div className="relative mx-10 w-full">
               <div className="text-5xl text-border text-slate-100">
                 <TaskEstimator />
@@ -262,7 +262,7 @@ export default function Home() {
           </section>
 
           {/* Center Section - Pomodoro Timer */}
-          <section className="flex w-1/2 flex-col items-center justify-center">
+          <section className="flex w-full flex-col items-center justify-center md:w-1/2">
             <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm">
               <h1 className="mb-7 text-5xl font-bold text-slate-100">
                 Pomodoro Timer
@@ -299,9 +299,9 @@ export default function Home() {
                 START
               </Button>
 
-              <div className="flex w-[40%] flex-row items-center justify-between">
+              <div className="flex w-[40%] flex-col items-center justify-between md:flex-row">
                 <Button
-                  className="mb-5 w-[48%] rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
+                  className="mb-5 w-full rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md md:w-[48%]"
                   onClick={handlePause}
                   variant="ghost"
                   type="button"
@@ -313,7 +313,7 @@ export default function Home() {
                   onClick={handleReset}
                   type="button"
                   variant="ghost"
-                  className="mb-5 w-[48%] rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
+                  className="mb-5 w-full rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md md:w-[48%]"
                 >
                   RESET
                 </Button>
@@ -322,7 +322,7 @@ export default function Home() {
           </section>
 
           {/* Right Section - Daily Streak */}
-          <section className="flex w-1/4 flex-shrink-0 items-center justify-center text-border">
+          <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:w-1/4">
             <div className="relative mx-10 w-full">
               <div className="flex flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
                 <div className="max-w-md">
