@@ -18,20 +18,9 @@ export default function TaskRow({
   onComplete,
   onDelete,
 }: TaskRowProps) {
-  const hasCompleted = useRef(false);
-
-  useEffect(
-    function () {
-      if (isActive) {
-        hasCompleted.current = false;
-      }
-    },
-    [isActive],
-  );
-
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked && isActive && !hasCompleted.current) {
-      hasCompleted.current = true;
+    if (e.target.checked && isActive && !completed) {
+      completed = true;
       onComplete();
     }
   };
@@ -39,7 +28,7 @@ export default function TaskRow({
   return (
     <div
       className={`flex items-center justify-between rounded-xl p-4 ${
-        hasCompleted.current
+        completed
           ? "bg-green-600/50"
           : isActive
             ? "bg-slate-800/50"
@@ -57,7 +46,7 @@ export default function TaskRow({
         />
         <div
           className={`text-md font-semibold text-slate-200 ${
-            hasCompleted.current ? "line-through" : ""
+            completed ? "line-through" : ""
           }`}
         >
           {task.text}

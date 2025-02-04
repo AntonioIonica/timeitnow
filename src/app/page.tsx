@@ -1,15 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import DailyStreak from "@/components/streak/DailyStreak";
+const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
+  ssr: false,
+});
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
 import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
+import dynamic from "next/dynamic";
 
-const WORK_DURATION = 0.5 * 60;
-const BREAK_DURATION = 0.2 * 60;
+const WORK_DURATION = 25 * 60;
+const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
   const { tasks, activeTaskIndex } = useTaskEstimation();
@@ -53,14 +56,6 @@ export default function Home() {
     return 0;
   });
 
-  // possible fix for substracting the break-duration from totaltimeleft
-  const [initialTotalWorkTime, setInitialTotalWorkTime] =
-    useState(WORK_DURATION);
-  const [accumulatedWorkElapsed, setAccumulatedWorkElapsed] = useState(0);
-  const [currentWorkSessionDuration, setCurrentWorkSessionDuration] =
-    useState(WORK_DURATION);
-  const [sessionEnd, setSessionEnd] = useState(null);
-
   const playSound = useCallback(
     (sound: HTMLAudioElement | null) => {
       if (!isMuted && sound) {
@@ -90,8 +85,6 @@ export default function Home() {
         }
       }
     } else {
-      // No active task: reset the timer to the initial work duration.
-
       setTotalSessions(1);
       setTimeLeft(WORK_DURATION);
       setTotalTimeLeft(WORK_DURATION);
@@ -133,14 +126,15 @@ export default function Home() {
 
     if (estimatedTime) {
       const totalSeconds = estimatedTime;
+      const firstSessionDuration = Math.min(WORK_DURATION, totalSeconds);
       // Compute total sessions for display purposes
-      const numberOfSessions =
+      setTotalSessions(
         totalSeconds < WORK_DURATION
           ? 1
-          : Math.ceil(totalSeconds / WORK_DURATION);
-      setTotalSessions(numberOfSessions);
+          : Math.ceil(totalSeconds / WORK_DURATION),
+      );
       // Reset both timer counts to the full initial estimated time.
-      setTimeLeft(totalSeconds);
+      setTimeLeft(firstSessionDuration);
       setTotalTimeLeft(totalSeconds);
     } else {
       setTimeLeft(WORK_DURATION);
@@ -155,12 +149,21 @@ export default function Home() {
     if (isRunning && timeLeft > 0) {
       timer = setInterval(() => {
         // possible sync timing
-        const timestamp = Date.now();
         setTimeLeft((prev) => Math.max(0, prev - 1));
         setTotalTimeLeft((prev) => Math.max(0, prev - 1));
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
       playSound(successSound);
+
+      // if estimatedTime is less than 25 min, no more break time
+      if (estimatedTime < WORK_DURATION) {
+        if (!isBreak && totalTimeLeft === 0) {
+          setDailyStreak((prev) => prev + 1);
+        }
+        setIsRunning(false);
+        handleReset();
+        return;
+      }
 
       if (!isBreak && totalTimeLeft === 0) {
         setDailyStreak((prev) => prev + 1);
@@ -212,12 +215,13 @@ export default function Home() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
-  function formatTotalTime(seconds: number) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // function formatTotalTime(seconds: number) {
+  //   const mins = Math.floor(seconds / 60);
+  //   const secs = seconds % 60;
 
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  }
+  //   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  // }
 
   function handleStart() {
     setIsRunning(true);
@@ -233,17 +237,17 @@ export default function Home() {
     <div className="relative box-border min-h-screen">
       <div className="relative z-10 min-h-screen">
         <div className="flex h-screen w-screen">
-          <button
-            type="button"
+          <Button
             onClick={() => {
               handleToggleMute();
               if (isMuted && deploySound) deploySound.play();
             }}
-            className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
+            // className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
+            className="absolute right-5 top-5 rounded-xl bg-white/30 py-6 text-2xl shadow-md backdrop-blur-sm"
             aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
           >
             {isMuted ? "🔇" : "🔊"}
-          </button>
+          </Button>
 
           {/* Left Section: occupies 1/4 of screen width */}
           <section className="flex w-1/4 flex-shrink-0 items-center justify-center text-border">
@@ -267,7 +271,7 @@ export default function Home() {
                     Session {currentSession} of {totalSessions}
                   </div>
                 )}
-              <div className="py-3 text-lg text-slate-100 underline">
+              <div className="py-3 text-lg font-bold text-slate-100 underline">
                 {isBreak ? "( Break Time )" : "( Work Time )"}
               </div>
               {/* {estimatedTime > 1 &&
@@ -286,26 +290,29 @@ export default function Home() {
                 type="button"
                 disabled={isRunning}
                 onClick={handleStart}
-                className="mb-5 w-[40%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+                variant="ghost"
+                className="mb-5 w-[40%] px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
               >
-                Start
+                START
               </Button>
 
               <div className="flex w-[40%] flex-row items-center justify-between">
                 <Button
-                  className="mb-5 w-[48%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+                  className="mb-5 w-[48%] rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
                   onClick={handlePause}
+                  variant="ghost"
                   type="button"
                   disabled={!isRunning}
                 >
-                  Pause
+                  PAUSE
                 </Button>
                 <Button
                   onClick={handleReset}
                   type="button"
-                  className="mb-5 w-[48%] rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-2 text-2xl font-medium text-slate-200 shadow-md transition duration-300 hover:opacity-90"
+                  variant="ghost"
+                  className="mb-5 w-[48%] rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
                 >
-                  Reset
+                  RESET
                 </Button>
               </div>
             </div>
