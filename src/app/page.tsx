@@ -15,7 +15,7 @@ const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
-  const { tasks, activeTaskIndex } = useTaskEstimation();
+  const { tasks, activeTaskIndex, completeTask } = useTaskEstimation();
   const activeTask =
     activeTaskIndex !== null && tasks[activeTaskIndex]
       ? tasks[activeTaskIndex]
@@ -153,20 +153,23 @@ export default function Home() {
         setTotalTimeLeft((prev) => Math.max(0, prev - 1));
       }, 1000);
     } else if (isRunning && timeLeft === 0) {
-      playSound(successSound);
-
-      // if estimatedTime is less than 25 min, no more break time
-      if (estimatedTime < WORK_DURATION) {
-        if (!isBreak && totalTimeLeft === 0) {
-          setDailyStreak((prev) => prev + 1);
+      if (totalTimeLeft === 0) {
+        playSound(successSound);
+        completeTask();
+        if (!isBreak) {
+          setDailyStreak((prev) => prev++);
         }
         setIsRunning(false);
         handleReset();
         return;
       }
 
-      if (!isBreak && totalTimeLeft === 0) {
-        setDailyStreak((prev) => prev + 1);
+      playSound(successSound);
+
+      if (estimatedTime < WORK_DURATION) {
+        setIsRunning(false);
+        handleReset();
+        return;
       }
 
       if (isBreak) {
