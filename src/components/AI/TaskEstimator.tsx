@@ -61,7 +61,7 @@ export default function TaskEstimator() {
   return (
     <div className="w-full rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
       <h2 className="mb-4 text-2xl font-bold text-slate-100">
-        Tasks estimator:
+        Your TODO tasks -AI estimator-:
       </h2>
       {/* Input area for new task */}
       <form

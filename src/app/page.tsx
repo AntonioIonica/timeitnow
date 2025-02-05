@@ -157,7 +157,7 @@ export default function Home() {
         playSound(successSound);
         completeTask();
         if (!isBreak) {
-          setDailyStreak((prev) => prev++);
+          setDailyStreak((prev) => prev + 1);
         }
         setIsRunning(false);
         handleReset();
@@ -205,6 +205,7 @@ export default function Home() {
     estimatedTime,
     handleReset,
     successSound,
+    completeTask,
   ]);
 
   function handleToggleMute() {

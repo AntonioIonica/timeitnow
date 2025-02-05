@@ -5,7 +5,7 @@ interface DailyStreakProps {
 function DailyStreak({ dailyStreak }: DailyStreakProps) {
   return (
     <div className="mb-2 text-4xl font-medium text-border text-slate-200">
-      Daily Streak:
+      Today streaks:
       <br />
       <span className="flex items-center justify-center pt-4">
         {dailyStreak}🔥
