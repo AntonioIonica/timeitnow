@@ -59,9 +59,12 @@ export default function TaskEstimator() {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
+    <div className="relative w-full rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
+      <span className="transformation absolute -left-5 -top-2 -rotate-12 rounded-xl bg-white/30 px-2 text-lg font-semibold text-blue-500 backdrop-blur-sm duration-75 hover:-rotate-6 hover:scale-105">
+        Powered by AI
+      </span>
       <h2 className="mb-4 text-2xl font-bold text-slate-100">
-        Your TODO tasks -AI estimator-:
+        Task scheduler:
       </h2>
       {/* Input area for new task */}
       <form
