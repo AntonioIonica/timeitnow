@@ -4,17 +4,16 @@ import { useCallback, useEffect, useState } from "react";
 const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
   ssr: false,
 });
+const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
+  ssr: false,
+});
+
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
 import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
-
-// Dynamically import CatAnimation with ssr: false
-const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
-  ssr: false,
-});
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
@@ -237,21 +236,21 @@ export default function Home() {
   return (
     <div className="relative box-border min-h-screen">
       <div className="relative z-10 min-h-screen">
-        <div className="flex h-screen w-screen flex-col space-y-4 md:flex-row">
+        <div className="mt-10 flex h-screen w-screen flex-col space-y-4 md:mt-0 md:flex-row">
           <Button
             onClick={() => {
               handleToggleMute();
               if (isMuted && deploySound) deploySound.play();
             }}
-            className="absolute right-1 top-1 rounded-xl bg-white/30 px-[1px] py-[1px] text-2xl shadow-md backdrop-blur-sm md:right-5 md:top-5 md:px-4 md:py-6"
+            className="absolute -top-7 right-3 rounded-xl bg-white/30 px-[1px] py-[1px] text-2xl shadow-md backdrop-blur-sm md:right-5 md:top-5 md:px-4 md:py-6"
             aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
           >
             {isMuted ? "🔇" : "🔊"}
           </Button>
 
           {/* Left Section: occupies 1/4 of screen width */}
-          <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:w-1/4">
-            <div className="relative mx-10 w-full">
+          <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:my-0 md:w-1/4">
+            <div className="relative mx-10 mb-10 mt-1 w-full md:my-0 md:mt-0">
               <div className="text-5xl text-border text-slate-100">
                 <TaskEstimator />
               </div>
@@ -259,14 +258,14 @@ export default function Home() {
           </section>
 
           {/* Center Section - Pomodoro Timer */}
-          <section className="relative flex w-full flex-col items-center justify-center md:w-1/2">
+          <section className="relative mt-5 flex w-full flex-col items-center justify-center md:mt-0 md:w-1/2">
             {isMuted && (
-              <div className="absolute -top-[2px]">
+              <div className="absolute -top-[7.5rem]">
                 <CatAnimation width={120} height={120} play={isMuted} />
               </div>
             )}
-            <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm">
-              <h1 className="mb-7 text-5xl font-bold text-slate-100">
+            <div className="mb-10 flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm md:mb-0">
+              <h1 className="mb-7 text-3xl font-bold text-slate-100 md:text-5xl">
                 Pomodoro timer
               </h1>
               {estimatedTime > 1 &&
@@ -287,7 +286,7 @@ export default function Home() {
                   </div>
                 )} */}
               <div
-                className={`mb-6 font-mono text-8xl ${isBreak ? "text-slate-100" : "text-slate-100"}`}
+                className={`mb-6 font-mono text-6xl md:text-8xl ${isBreak ? "text-slate-100" : "text-slate-100"}`}
               >
                 {formatTime(timeLeft)}
               </div>
@@ -296,14 +295,14 @@ export default function Home() {
                 disabled={isRunning}
                 onClick={handleStart}
                 variant="ghost"
-                className="mb-5 w-[40%] px-6 py-2 text-2xl font-medium text-slate-100 shadow-md"
+                className="mb-5 w-[70%] px-6 py-2 text-xl font-medium text-slate-100 shadow-md md:w-[40%] md:text-2xl"
               >
                 START
               </Button>
 
-              <div className="flex w-[40%] flex-col items-center justify-between md:flex-row">
+              <div className="flex w-[70%] flex-col items-center justify-between md:w-[40%] md:flex-row">
                 <Button
-                  className="mb-5 w-full rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md md:w-[48%]"
+                  className="mb-5 w-full rounded-lg px-6 py-2 text-xl font-medium text-slate-100 shadow-md md:w-[48%] md:text-2xl"
                   onClick={handlePause}
                   variant="ghost"
                   type="button"
@@ -315,7 +314,7 @@ export default function Home() {
                   onClick={handleReset}
                   type="button"
                   variant="ghost"
-                  className="mb-5 w-full rounded-lg px-6 py-2 text-2xl font-medium text-slate-100 shadow-md md:w-[48%]"
+                  className="mb-5 w-full rounded-lg px-6 py-2 text-xl font-medium text-slate-100 shadow-md md:w-[48%] md:text-2xl"
                 >
                   RESET
                 </Button>
@@ -325,7 +324,7 @@ export default function Home() {
 
           {/* Right Section - Daily Streak */}
           <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:w-1/4">
-            <div className="relative mx-10 w-full">
+            <div className="relative mx-10 mb-4 w-full md:mb-0">
               <div className="flex flex-col items-center justify-center rounded-3xl bg-white/20 p-8 backdrop-blur-sm">
                 <div className="max-w-md">
                   <DailyStreak dailyStreak={dailyStreak} />
