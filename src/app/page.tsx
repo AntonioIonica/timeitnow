@@ -10,6 +10,7 @@ import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
+import CatAnimation from "@/components/CatAnimation";
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
@@ -238,7 +239,6 @@ export default function Home() {
               handleToggleMute();
               if (isMuted && deploySound) deploySound.play();
             }}
-            // className="absolute right-5 top-5 rounded-lg bg-white/30 px-4 py-3 text-3xl font-medium text-black shadow-md backdrop-blur-sm hover:bg-white/40"
             className="absolute right-1 top-1 rounded-xl bg-white/30 px-[1px] py-[1px] text-2xl shadow-md backdrop-blur-sm md:right-5 md:top-5 md:px-4 md:py-6"
             aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
           >
@@ -255,7 +255,12 @@ export default function Home() {
           </section>
 
           {/* Center Section - Pomodoro Timer */}
-          <section className="flex w-full flex-col items-center justify-center md:w-1/2">
+          <section className="relative flex w-full flex-col items-center justify-center md:w-1/2">
+            {isMuted && (
+              <div className="absolute -top-[2px]">
+                <CatAnimation width={120} height={120} play={isMuted} />
+              </div>
+            )}
             <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm">
               <h1 className="mb-7 text-5xl font-bold text-slate-100">
                 Pomodoro timer
