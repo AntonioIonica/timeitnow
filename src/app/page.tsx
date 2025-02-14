@@ -10,7 +10,11 @@ import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
-import CatAnimation from "@/components/CatAnimation";
+
+// Dynamically import CatAnimation with ssr: false
+const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
+  ssr: false,
+});
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
