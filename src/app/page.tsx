@@ -219,14 +219,6 @@ export default function Home() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // function formatTotalTime(seconds: number) {
-  //   const mins = Math.floor(seconds / 60);
-  //   const secs = seconds % 60;
-
-  //   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  // }
-
   function handleStart() {
     setIsRunning(true);
     playSound(clickSound);
@@ -266,7 +258,7 @@ export default function Home() {
           <section className="flex w-full flex-col items-center justify-center md:w-1/2">
             <div className="flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm">
               <h1 className="mb-7 text-5xl font-bold text-slate-100">
-                Pomodoro Timer
+                Pomodoro timer
               </h1>
               {estimatedTime > 1 &&
                 totalTimeLeft >= WORK_DURATION &&
