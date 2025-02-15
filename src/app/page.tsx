@@ -14,6 +14,7 @@ import TaskEstimator from "@/components/AI/TaskEstimator";
 import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
+import ProgressBar from "@/components/ProgressBar";
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
@@ -278,17 +279,15 @@ export default function Home() {
               <div className="py-3 text-lg font-bold text-slate-100 underline">
                 {isBreak ? "( Break Time )" : "( Work Time )"}
               </div>
-              {/* {estimatedTime > 1 &&
-                totalTimeLeft >= WORK_DURATION &&
-                totalSessions > 1 && (
-                  <div className="mb-4 text-lg text-slate-100">
-                    Total Time Remaining: {formatTotalTime(totalTimeLeft)}
-                  </div>
-                )} */}
+
               <div
                 className={`mb-6 font-mono text-6xl md:text-8xl ${isBreak ? "text-slate-100" : "text-slate-100"}`}
               >
                 {formatTime(timeLeft)}
+              </div>
+
+              <div className="mb-4 w-[90%] md:w-[80%]">
+                <ProgressBar totalTime={WORK_DURATION} timeLeft={timeLeft} />
               </div>
               <Button
                 type="button"
