@@ -15,6 +15,7 @@ import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
 import ProgressBar from "@/components/ProgressBar";
+import RandomQuotes from "@/components/RandomQuotes";
 
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
@@ -237,7 +238,7 @@ export default function Home() {
   return (
     <div className="relative box-border min-h-screen">
       <div className="relative z-10 min-h-screen">
-        <div className="mt-10 flex h-screen w-screen flex-col space-y-4 md:mt-0 md:flex-row">
+        <div className="relative mt-10 flex h-screen w-screen flex-col space-y-2 md:mt-0 md:flex-row md:space-y-0">
           <Button
             onClick={() => {
               handleToggleMute();
@@ -248,10 +249,15 @@ export default function Home() {
           >
             {isMuted ? "🔇" : "🔊"}
           </Button>
+          {isMuted && (
+            <div className="absolute -top-[5.9rem] right-8 md:right-1 md:top-0">
+              <CatAnimation width={100} height={100} play={isMuted} />
+            </div>
+          )}
 
           {/* Left Section: occupies 1/4 of screen width */}
           <section className="flex w-full flex-shrink-0 items-center justify-center text-border md:my-0 md:w-1/4">
-            <div className="relative mx-10 mb-10 mt-1 w-full md:my-0 md:mt-0">
+            <div className="relative mb-6 mt-2 w-[80%] md:mx-10 md:my-0 md:mb-10 md:mt-0 md:w-full">
               <div className="text-5xl text-border text-slate-100">
                 <TaskEstimator />
               </div>
@@ -260,11 +266,9 @@ export default function Home() {
 
           {/* Center Section - Pomodoro Timer */}
           <section className="relative mt-5 flex w-full flex-col items-center justify-center md:mt-0 md:w-1/2">
-            {isMuted && (
-              <div className="absolute -top-[7.5rem]">
-                <CatAnimation width={120} height={120} play={isMuted} />
-              </div>
-            )}
+            <div className="mb-8 w-[80%] rounded-3xl bg-white/20 p-4 backdrop-blur-sm md:mb-8">
+              <RandomQuotes />
+            </div>
             <div className="mb-10 flex w-4/5 flex-col items-center justify-center rounded-3xl bg-white/20 p-10 backdrop-blur-sm md:mb-0">
               <h1 className="mb-7 text-3xl font-bold text-slate-100 md:text-5xl">
                 Pomodoro timer
