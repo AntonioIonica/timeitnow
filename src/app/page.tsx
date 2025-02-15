@@ -291,7 +291,14 @@ export default function Home() {
               </div>
 
               <div className="mb-4 w-[90%] md:w-[80%]">
-                <ProgressBar totalTime={WORK_DURATION} timeLeft={timeLeft} />
+                <ProgressBar
+                  totalTime={
+                    estimatedTime < BREAK_DURATION
+                      ? estimatedTime
+                      : BREAK_DURATION
+                  }
+                  timeLeft={timeLeft}
+                />
               </div>
               <Button
                 type="button"
