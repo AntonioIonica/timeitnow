@@ -1,14 +1,46 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 interface DailyStreakProps {
   dailyStreak: number;
 }
 
 function DailyStreak({ dailyStreak }: DailyStreakProps) {
+  const [bestStreak, setBestStreak] = useState<number>(0);
+
+  useEffect(() => {
+    const savedStreak = Number(localStorage.getItem("bestStreak")) || 0;
+
+    if (savedStreak < dailyStreak) {
+      localStorage.setItem("bestStreak", String(dailyStreak));
+      setBestStreak(dailyStreak);
+    } else {
+      setBestStreak(savedStreak);
+    }
+
+    const today = new Date().toDateString();
+    const lastSavedStreak = localStorage.getItem("lastSavedStreak");
+
+    if (today === lastSavedStreak) return;
+
+    localStorage.setItem("lastSavedStreak", today);
+    const newStreak = savedStreak + 1;
+    localStorage.setItem("bestStreak", String(newStreak));
+    setBestStreak(newStreak);
+  }, [dailyStreak]);
+
   return (
     <div className="mb-2 text-4xl font-medium text-border text-slate-200">
-      Today streaks:
+      Today streak:
+      <br />
+      <span className="flex items-center justify-center py-4">
+        {dailyStreak}🔥
+      </span>
+      Best streak:
       <br />
       <span className="flex items-center justify-center pt-4">
-        {dailyStreak}🔥
+        {bestStreak}🔥
       </span>
     </div>
   );
