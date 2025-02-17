@@ -50,6 +50,7 @@ export default function TaskEstimator() {
         text: taskInput,
         estimatedTime,
       });
+
       setTaskInput("");
     } catch (error) {
       console.error("Error estimating time", error);

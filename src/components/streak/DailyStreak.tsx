@@ -25,9 +25,8 @@ function DailyStreak({ dailyStreak }: DailyStreakProps) {
     if (today === lastSavedStreak) return;
 
     localStorage.setItem("lastSavedStreak", today);
-    const newStreak = savedStreak + 1;
-    localStorage.setItem("bestStreak", String(newStreak));
-    setBestStreak(newStreak);
+    localStorage.setItem("bestStreak", String(savedStreak));
+    setBestStreak(savedStreak);
   }, [dailyStreak]);
 
   return (
