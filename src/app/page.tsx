@@ -7,11 +7,16 @@ const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
 const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
   ssr: false,
 });
+const TaskEstimator = dynamic(() => import("@/components/AI/TaskEstimator"), {
+  ssr: false,
+});
 
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
-import TaskEstimator from "@/components/AI/TaskEstimator";
-import { useTaskEstimation } from "@/components/contexts/TaskEstimatorContext";
+import {
+  getStoredActiveIndex,
+  useTaskEstimation,
+} from "@/components/contexts/TaskEstimatorContext";
 import { useSounds } from "@/components/hooks/useSounds";
 import dynamic from "next/dynamic";
 import ProgressBar from "@/components/ProgressBar";
@@ -21,10 +26,11 @@ const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
-  const { tasks, activeTaskIndex, completeTask } = useTaskEstimation();
+  const { tasks, completeTask } = useTaskEstimation();
+  const storedActiveIndex = getStoredActiveIndex();
   const activeTask =
-    activeTaskIndex !== null && tasks[activeTaskIndex]
-      ? tasks[activeTaskIndex]
+    storedActiveIndex !== null && tasks[storedActiveIndex]
+      ? tasks[storedActiveIndex]
       : null;
   const estimatedTime = activeTask ? activeTask.estimatedTime : 0;
 
@@ -234,6 +240,11 @@ export default function Home() {
     setIsRunning(false);
     playSound(typingSound);
   }
+  const totalTimeProgress =
+    estimatedTime !== 0 && estimatedTime < WORK_DURATION
+      ? estimatedTime
+      : WORK_DURATION;
+  const progress = ((totalTimeProgress - timeLeft) / totalTimeProgress) * 100;
 
   return (
     <div className="relative box-border min-h-screen">
@@ -291,14 +302,7 @@ export default function Home() {
               </div>
 
               <div className="mb-4 w-[90%] md:w-[80%]">
-                <ProgressBar
-                  totalTime={
-                    estimatedTime && estimatedTime < WORK_DURATION
-                      ? estimatedTime
-                      : WORK_DURATION
-                  }
-                  timeLeft={timeLeft}
-                />
+                <ProgressBar progress={progress} />
               </div>
               <Button
                 type="button"

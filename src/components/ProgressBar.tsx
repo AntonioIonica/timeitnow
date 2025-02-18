@@ -1,18 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 interface ProgressBarProps {
-  totalTime: number;
-  timeLeft: number;
+  progress: number;
 }
 
-function ProgressBar({ totalTime, timeLeft }: ProgressBarProps) {
-  const progress = ((totalTime - timeLeft) / totalTime) * 100;
+function ProgressBar({ progress }: ProgressBarProps) {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    if (progress < 100) {
+      setWidth(progress);
+    } else {
+      setWidth(0);
+    }
+  }, [progress]);
 
   return (
     <div className="h-5 w-full overflow-hidden rounded-full bg-gray-200 md:h-4">
       <div
-        className="duration-50 h-full bg-green-700 transition-all"
-        style={{ width: `${progress}%` }}
+        className="h-full bg-green-700 transition-all duration-300"
+        style={{ width: `${width}%` }}
       />
     </div>
   );

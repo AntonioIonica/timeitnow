@@ -90,7 +90,7 @@ export default function TaskEstimator() {
       </form>
       {/* Scheduled task list */}
       {tasks.length > 0 && (
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 overflow-auto text-sm">
           {tasks.map((task, index) => (
             <TaskRow
               key={task.id}
