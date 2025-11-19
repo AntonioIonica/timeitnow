@@ -21,7 +21,12 @@ const TaskEstimatorContext = createContext<TaskEstimatorContextType>({
 
 function getStoredTasks(): Task[] {
   try {
-    const storedTask = localStorage.getItem("tasks");
+    let storedTask = null;
+    if (typeof window !== "undefined") {
+      storedTask = localStorage.getItem("tasks");
+      if (storedTask === "undefined") return [];
+    }
+
     return storedTask ? JSON.parse(storedTask) : [];
   } catch (error) {
     console.error("Failing to get any task", error);
@@ -31,7 +36,9 @@ function getStoredTasks(): Task[] {
 
 function setStoredTask(tasks: Task[]) {
   try {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
   } catch (error) {
     console.error("Failed to save the task", error);
   }
@@ -39,7 +46,12 @@ function setStoredTask(tasks: Task[]) {
 
 export function getStoredActiveIndex(): number | null {
   try {
-    const storedActiveIndex = localStorage.getItem("activeIndex");
+    let storedActiveIndex = null;
+    if (typeof window !== "undefined") {
+      storedActiveIndex = localStorage.getItem("activeIndex");
+      if (storedActiveIndex === "undefined") return null;
+    }
+
     return storedActiveIndex ? JSON.parse(storedActiveIndex) : null;
   } catch (error) {
     console.error("Failed to get the active index", error);
@@ -49,7 +61,8 @@ export function getStoredActiveIndex(): number | null {
 
 function setStoredActiveIndex(index: number | null) {
   try {
-    localStorage.setItem("activeIndex", JSON.stringify(index));
+    if (typeof window !== "undefined")
+      localStorage.setItem("activeIndex", JSON.stringify(index));
   } catch (error) {
     console.error("Failed to set the active index", error);
   }

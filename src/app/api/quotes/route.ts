@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const res = await fetch("https://zenquotes.io/api/random");
+    const res = await fetch("https://zenquotes.io/api/random"); // API to get random quotes
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
