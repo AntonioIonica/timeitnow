@@ -1,13 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+// default quote until fetching from the endpoint
 const defaultQuote = [
   {
     q: "Small progress is still progress!",
     a: "Anonymous",
   },
 ];
-
-import { useEffect, useState } from "react";
 
 function RandomQuotes() {
   const [quote, setQuote] = useState(defaultQuote[0]);

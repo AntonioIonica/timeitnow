@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NowPomodoro | AI",
+  title: "Tomatoro | AI",
   description: "Your new TO DO app with task estimator included",
 };
 
