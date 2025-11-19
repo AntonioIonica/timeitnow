@@ -19,6 +19,7 @@ const TaskEstimatorContext = createContext<TaskEstimatorContextType>({
   deleteTask: () => {},
 });
 
+// Get all the tasks from local storage
 function getStoredTasks(): Task[] {
   try {
     let storedTask = null;
@@ -34,6 +35,7 @@ function getStoredTasks(): Task[] {
   }
 }
 
+// set the tasks in local storage
 function setStoredTask(tasks: Task[]) {
   try {
     if (typeof window !== "undefined") {
@@ -44,6 +46,7 @@ function setStoredTask(tasks: Task[]) {
   }
 }
 
+// gets the index of active task (first) from the local storage
 export function getStoredActiveIndex(): number | null {
   try {
     let storedActiveIndex = null;
@@ -59,6 +62,7 @@ export function getStoredActiveIndex(): number | null {
   }
 }
 
+// save the index of active task in local storage
 function setStoredActiveIndex(index: number | null) {
   try {
     if (typeof window !== "undefined")
@@ -79,8 +83,9 @@ export function TaskEstimationProvider({
   );
 
   const addTask = (task: Omit<Task, "completed">) => {
-    const newTask = { ...task, completed: false };
-    const newTasks = [...tasks, newTask];
+    const newTask = { ...task, completed: false }; // add a new task
+    const newTasks = [...tasks, newTask]; // add the task in the array
+
     setStoredTask(newTasks);
     setTasks(newTasks);
 
@@ -101,18 +106,20 @@ export function TaskEstimationProvider({
 
     setActiveTaskIndex((prev) => {
       if (prev === null) return null;
+
       const nextIndex = prev + 1;
-      setStoredActiveIndex(nextIndex);
-      return nextIndex < tasks.length ? nextIndex : tasks.length;
+      setStoredActiveIndex(nextIndex); // move the active task to the next one by index
+      return nextIndex < tasks.length ? nextIndex : tasks.length; // index or end
     });
   };
 
   const deleteTask = (id: number) => {
     setTasks((prevTasks) => {
-      const deletedIndex = prevTasks.findIndex((task) => task.id === id);
-      const newTasks = prevTasks.filter((task) => task.id !== id);
+      const deletedIndex = prevTasks.findIndex((task) => task.id === id); // get the task to be deleted
+      const newTasks = prevTasks.filter((task) => task.id !== id); // deleting the task from array tasks
       setStoredTask(newTasks);
 
+      // change the active task by index
       let newActiveIndex = activeTaskIndex;
       if (newTasks.length === 0) {
         newActiveIndex = null;

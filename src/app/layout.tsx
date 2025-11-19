@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NowPomodoro | AI",
-  description: "Many breaks the key to your success!",
+  description: "Your new TO DO app with task estimator included",
 };
 
 export default function RootLayout({

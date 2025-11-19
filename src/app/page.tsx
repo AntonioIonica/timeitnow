@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+
+// fix to hydrate bugs
 const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
   ssr: false,
 });
@@ -22,12 +24,13 @@ import dynamic from "next/dynamic";
 import ProgressBar from "@/components/ProgressBar";
 import RandomQuotes from "@/components/RandomQuotes";
 
+// Pomodoro classic values * 60 to be transformed into seconds
 const WORK_DURATION = 25 * 60;
 const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
   const { tasks, completeTask } = useTaskEstimation();
-  const storedActiveIndex = getStoredActiveIndex();
+  const storedActiveIndex = getStoredActiveIndex(); // active task
   const activeTask =
     storedActiveIndex !== null && tasks[storedActiveIndex]
       ? tasks[storedActiveIndex]
@@ -55,6 +58,7 @@ export default function Home() {
         const now = new Date();
         const lastUpdatedDate = new Date(parseInt(lastUpdated));
 
+        // Daily reset streak
         if (now.toDateString() !== lastUpdatedDate.toDateString()) {
           localStorage.removeItem("dailyStreak");
           localStorage.removeItem("lastUpdated");
@@ -89,7 +93,7 @@ export default function Home() {
           setTotalSessions(1);
           setTimeLeft(totalSeconds);
           setTotalTimeLeft(totalSeconds);
-        } else {
+        } else { // dividing the work in multiple sessions
           const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
           setTotalSessions(numberOfSessions);
           setTimeLeft(WORK_DURATION);
@@ -104,6 +108,7 @@ export default function Home() {
     }
   }, [estimatedTime]);
 
+  // resetting the daily streak at midnight
   useEffect(function () {
     if (typeof window !== "undefined") {
       const now = new Date();
@@ -138,6 +143,7 @@ export default function Home() {
 
     if (estimatedTime) {
       const totalSeconds = estimatedTime;
+      // if estimated time > 1 session of pomodoro, then split in multiple sessions
       const firstSessionDuration = Math.min(WORK_DURATION, totalSeconds);
       // Compute total sessions for display purposes
       setTotalSessions(
@@ -168,6 +174,7 @@ export default function Home() {
       if (totalTimeLeft === 0) {
         playSound(successSound);
         completeTask();
+        changeBackground(); // after each task the background will change (increment currentIndex)
         if (!isBreak) {
           setDailyStreak((prev) => prev + 1);
         }
@@ -187,7 +194,7 @@ export default function Home() {
       if (isBreak) {
         setIsBreak(false);
         if (currentSession < totalSessions) {
-          const remainingSeconds = totalTimeLeft; // could add - BREAK_DURATION
+          const remainingSeconds = totalTimeLeft;
           const nextSessionDuration =
             currentSession === totalSessions - 1
               ? remainingSeconds

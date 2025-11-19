@@ -25,7 +25,7 @@ export function BackgroundProvider({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const changeBackground = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setCurrentIndex(prevIndex => (prevIndex + 1) % images.length); // to not exceed the number of images
   }, []);
 
   return (
@@ -35,8 +35,10 @@ export function BackgroundProvider({
   );
 }
 
+// context hook of background
 export function useBackground() {
   const context = useContext(BackgroundContext);
+
   if (!context) {
     throw new Error("useBackground must be used within a BackgroundProvider");
   }

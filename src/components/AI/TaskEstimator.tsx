@@ -22,6 +22,7 @@ export default function TaskEstimator() {
   const handleEstimate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!taskInput.trim()) return;
+
     setLoading(true);
 
     try {
@@ -40,7 +41,7 @@ export default function TaskEstimator() {
 
       if (estimatedTime > 0) {
         if (typingSound) {
-          typingSound.currentTime = 0;
+          typingSound.currentTime = 0; // playback times
           typingSound.play();
         }
       }
@@ -53,7 +54,7 @@ export default function TaskEstimator() {
 
       setTaskInput("");
     } catch (error) {
-      console.error("Error estimating time", error);
+      console.error("Error while estimating time.", error);
     } finally {
       setLoading(false);
     }
@@ -96,7 +97,7 @@ export default function TaskEstimator() {
               key={task.id}
               task={task}
               isActive={index === activeTaskIndex}
-              completed={index < (activeTaskIndex ?? 0)}
+              completed={index < (activeTaskIndex ?? 0)} // the lower the index then active task index, then completed
               onComplete={completeTask}
               onDelete={() => deleteTask(task.id)}
             />
