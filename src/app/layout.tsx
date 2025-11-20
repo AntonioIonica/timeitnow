@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tomatoro | AI",
-  description: "Your new TO DO app with task estimator included",
+  title: "TimeItNow Pomodoro planner",
+  description: "Play with your day | AI task estimator",
 };
 
 export default function RootLayout({

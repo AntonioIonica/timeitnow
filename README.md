@@ -10,23 +10,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/AntonioIonica/pomonow">
-    <img src="./public/logo-light.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/AntonioIonica/timeitnow">
+    <img src="./public/pomodorotimer.svg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Tomatoro</h3>
+<h3 align="center">TimeItNow AI planner</h3>
 
   <p align="center">
     Pomodoro To Do app with integrated AI to estimate the necessary time to complete each task
     <br />
-    <a href="https://github.com/AntonioIonica/pomonow"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/AntonioIonica/timeitnow"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/AntonioIonica/pomonow">View Demo</a>
+    <a href="https://github.com/AntonioIonica/timeitnow">View Demo</a>
     &middot;
-    <a href="https://github.com/AntonioIonica/pomonow/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/AntonioIonica/timeitnow/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/AntonioIonica/pomonow/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/AntonioIonica/timeitnow/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -63,25 +63,26 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![PomoNow][product-screenshot]](https://ibb.co/DD7bXPzX)
+[![TimeItNow][product-screenshot]](https://ibb.co/W861t7g)
 
-Another tutorial project where I followed James Schmedtmann guide with the goal of learning multiple technologies. 
-Hotel management platform with closed account creation for the employees. They manage the guests check in and check out and create records of cabins.
+The web app is a planner/to do with implemented AI to handle each time of the tasks without having the user to set a specific time. The timer play sounds each time a task is finished to the user knows when to take a break.
+
+My first full little pet project where I learned to handle APIs, dynamic and lazy loading, context and styling using TailwindCSS.
+
 
 Key features:
-  - hotel employees can login, as there is no register page-only employees can access the platform
-  - visual statistics for bookings, cabins
-  - real time update of cabins using Supabase
-  - account setting for employees
-  - managing cabins
-  - dark mode
+  - mute/unmute button
+  - start pomodoro technique without any tasks
+  - input any task description to get an estimated time
+  - tasks are sent to todo list
+  - daily streak
 
 Topics I learned: 
-  - authentication and authorization using Supabase
-  - state management using React Query
-  - dark mode
-  - data visualization using Recharts
-  - React hot toast
+  - Next.JS
+  - Context
+  - lazy/dynamic loading
+  - TailwindCSS
+  - Gemini API/zenquotes API
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -90,9 +91,9 @@ Topics I learned:
 ### Built With
 
 * React [![React][react.dev]][React-url]
-* Next
-* Gemini 
-* Tailwind CSS
+* Next.js [![Next.JS][nextjs.org]][next.js-url]
+* Gemini [![Gemini][gemini.google.com]][gemini-url]
+* TailwindCSS [![TailwindCSS][tailwindcss.com]][tailwindcss-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -116,7 +117,7 @@ To get a local copy up and running follow these simple example steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/AntonioIonica/pomonow
+   git clone https://github.com/AntonioIonica/timeitnow
    ```
 2. Install NPM packages
    ```sh
@@ -156,7 +157,7 @@ I use the website on daily pattern, as a task manager and also pomodoro timer to
 - [x] random quotes
 
 
-See the [open issues](https://github.com/AntonioIonica/pomonow/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/AntonioIonica/timeitnow/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -196,30 +197,41 @@ Distributed under the project_license. See `LICENSE.txt` for more information.
 
 Your Name - [@X](https://twitter.com/AntonioIonica) - antonioionica@gmail.com
 
-Project Link: [Github](https://github.com/AntonioIonica/pomonow)
+Project Link: [Github](https://github.com/AntonioIonica/timeitnow)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
 
+* I used the API (https://zenquotes.io) api to get the random quotes
+* Task estimator was powered by Gemini API (https://ai.google.dev/gemini-api/docs/models)
+
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/AntonioIonica/pomonow.svg?style=for-the-badge
-[contributors-url]: https://github.com/AntonioIonica/pomonow/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/AntonioIonica/pomonow.svg?style=for-the-badge
-[forks-url]: https://github.com/AntonioIonica/pomonow/network/members
-[stars-shield]: https://img.shields.io/github/stars/AntonioIonica/pomonow.svg?style=for-the-badge
-[stars-url]: https://github.com/AntonioIonica/pomonow/stargazers
-[issues-shield]: https://img.shields.io/github/issues/AntonioIonica/pomonow.svg?style=for-the-badge
-[issues-url]: https://github.com/AntonioIonica/pomonow/issues
-[license-shield]: https://img.shields.io/github/license/AntonioIonica/pomonow.svg?style=for-the-badge
-[license-url]: https://github.com/AntonioIonica/pomonow/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/AntonioIonica/timeitnow.svg?style=for-the-badge
+[contributors-url]: https://github.com/AntonioIonica/timeitnow/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AntonioIonica/timeitnow.svg?style=for-the-badge
+[forks-url]: https://github.com/AntonioIonica/timeitnow/network/members
+[stars-shield]: https://img.shields.io/github/stars/AntonioIonica/timeitnow.svg?style=for-the-badge
+[stars-url]: https://github.com/AntonioIonica/timeitnow/stargazers
+[issues-shield]: https://img.shields.io/github/issues/AntonioIonica/timeitnow.svg?style=for-the-badge
+[issues-url]: https://github.com/AntonioIonica/timeitnow/issues
+[license-shield]: https://img.shields.io/github/license/AntonioIonica/timeitnow.svg?style=for-the-badge
+[license-url]: https://github.com/AntonioIonica/timeitnow/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/antonio-iulian-ionica-478074353/
-[product-screenshot]: ./public/project_screenshot.png
+[product-screenshot]: ./public/timeitnow_screenshot.png
 <!-- Shields.io badges. You can a comprehensive list with many more badges at: https://github.com/inttter/md-badges -->
 [react.dev]: https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB
-[React-url]: https://react.dev 
-[react.dev]: https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB
-[React-url]: https://react.dev 
+[React-url]: https://react.dev/ 
+[nextjs.org]: https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white
+[next.js-url]: https://nextjs.org/
+[gemini.google.com]: https://img.shields.io/badge/Google%20Gemini-886FBF?logo=googlegemini&logoColor=fff
+[gemini-url]: https://www.gemini.google.com/ 
+[tailwindcss.com]: https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white
+[tailwindcss-url]: https://www.tailwindcss.com/
 
