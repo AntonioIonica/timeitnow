@@ -98,16 +98,18 @@ export function TaskEstimationProvider({
   const completeTask = () => {
     if (activeTaskIndex === null) return;
 
+    // Set the task attribute as complete
     const storedTasks = tasks.map((task, index) =>
       index === activeTaskIndex ? { ...task, completed: true } : task,
     );
-    setTasks(storedTasks);
-    setStoredTask(storedTasks);
+    setTasks(storedTasks); // save the task
+    setStoredTask(storedTasks); // set the task in localstorage
 
+    // when a task is completed, the active tasks index is incremented so the next task becomes active
     setActiveTaskIndex((prev) => {
       if (prev === null) return null;
 
-      const nextIndex = prev + 1;
+      const nextIndex = prev + 1; // next task becomes active
       setStoredActiveIndex(nextIndex); // move the active task to the next one by index
       return nextIndex < tasks.length ? nextIndex : tasks.length; // index or end
     });

@@ -84,6 +84,37 @@ Topics I learned:
   - TailwindCSS
   - Gemini API/zenquotes API
 
+Code examples: 
+
+```js
+// setting the time into 1 or multiple sessions depending on the incoming time
+useEffect(() => {
+    if (estimatedTime && estimatedTime > 0) {
+      const totalSeconds = parseInt(String(estimatedTime));
+
+      setIsRunning(false);
+
+      if (!isNaN(totalSeconds) && totalSeconds > 0) {
+        if (totalSeconds < WORK_DURATION) {
+          setTotalSessions(1);
+          setTimeLeft(totalSeconds);
+          setTotalTimeLeft(totalSeconds);
+        } else { // dividing the work in multiple sessions
+          const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
+          setTotalSessions(numberOfSessions);
+          setTimeLeft(WORK_DURATION);
+          setTotalTimeLeft(totalSeconds);
+        }
+      }
+    } else {
+      setTotalSessions(1);
+      setTimeLeft(WORK_DURATION);
+      setTotalTimeLeft(WORK_DURATION);
+      setIsRunning(false);
+    }
+  }, [estimatedTime]);
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
