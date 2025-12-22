@@ -2,17 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-// fix to hydrate bugs
-const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
-  ssr: false,
-});
-const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
-  ssr: false,
-});
-const TaskEstimator = dynamic(() => import("@/components/AI/TaskEstimator"), {
-  ssr: false,
-});
-
 import { Button } from "@/components/ui/button";
 import { useBackground } from "@/components/Background";
 import {
@@ -24,9 +13,20 @@ import dynamic from "next/dynamic";
 import ProgressBar from "@/components/ProgressBar";
 import RandomQuotes from "@/components/RandomQuotes";
 
+// fix for hydrate bugs
+const DailyStreak = dynamic(() => import("@/components/streak/DailyStreak"), {
+  ssr: false,
+});
+const CatAnimation = dynamic(() => import("@/components/CatAnimation"), {
+  ssr: false,
+});
+const TaskEstimator = dynamic(() => import("@/components/AI/TaskEstimator"), {
+  ssr: false,
+});
+
 // Pomodoro classic values * 60 to be transformed into seconds
-const WORK_DURATION = 25 * 60;
-const BREAK_DURATION = 5 * 60;
+const WORK_DURATION = 90 * 60;
+const BREAK_DURATION = 20 * 60;
 
 export default function Home() {
   const { tasks, completeTask } = useTaskEstimation();
@@ -93,7 +93,8 @@ export default function Home() {
           setTotalSessions(1);
           setTimeLeft(totalSeconds);
           setTotalTimeLeft(totalSeconds);
-        } else { // dividing the work in multiple sessions
+        } else {
+          // dividing the work in multiple sessions
           const numberOfSessions = Math.ceil(totalSeconds / WORK_DURATION);
           setTotalSessions(numberOfSessions);
           setTimeLeft(WORK_DURATION);
@@ -229,6 +230,7 @@ export default function Home() {
 
   function handleToggleMute() {
     setIsMuted((prev) => !prev);
+    console.log("Clicked");
   }
 
   function formatTime(seconds: number) {
@@ -323,6 +325,12 @@ export default function Home() {
 
               <div className="flex w-[70%] flex-col items-center justify-between md:w-[40%] md:flex-row">
                 <Button
+                  lex
+                  h-screen
+                  w-screen
+                  flex-col
+                  space-y-2
+                  overflow
                   className="mb-5 w-full rounded-lg px-6 py-2 text-xl font-medium text-slate-100 shadow-md md:w-[48%] md:text-2xl"
                   onClick={handlePause}
                   variant="ghost"

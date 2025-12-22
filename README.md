@@ -115,6 +115,13 @@ useEffect(() => {
   }, [estimatedTime]);
 ```
 
+```js
+// change backgrounds after each completed task
+const changeBackground = useCallback(() => {
+    setCurrentIndex(prevIndex => (prevIndex + 1) % images.length); // if exceeding, back to 0 index
+  }, []);
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
