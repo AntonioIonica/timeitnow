@@ -325,12 +325,6 @@ export default function Home() {
 
               <div className="flex w-[70%] flex-col items-center justify-between md:w-[40%] md:flex-row">
                 <Button
-                  lex
-                  h-screen
-                  w-screen
-                  flex-col
-                  space-y-2
-                  overflow
                   className="mb-5 w-full rounded-lg px-6 py-2 text-xl font-medium text-slate-100 shadow-md md:w-[48%] md:text-2xl"
                   onClick={handlePause}
                   variant="ghost"
