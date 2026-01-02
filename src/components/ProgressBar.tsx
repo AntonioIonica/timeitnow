@@ -7,7 +7,7 @@ interface ProgressBarProps {
 }
 
 function ProgressBar({ progress }: ProgressBarProps) {
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState<number>(0);
 
   useEffect(() => {
     if (progress < 100) {

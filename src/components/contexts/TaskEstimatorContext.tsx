@@ -95,7 +95,7 @@ export function TaskEstimationProvider({
     }
   };
 
-  const completeTask = () => {
+  const completeTask = (): void => {
     if (activeTaskIndex === null) return;
 
     // Set the task attribute as complete
@@ -115,7 +115,7 @@ export function TaskEstimationProvider({
     });
   };
 
-  const deleteTask = (id: number) => {
+  const deleteTask = (id: number): void => {
     setTasks((prevTasks) => {
       const deletedIndex = prevTasks.findIndex((task) => task.id === id); // get the task to be deleted
       const newTasks = prevTasks.filter((task) => task.id !== id); // deleting the task from array tasks

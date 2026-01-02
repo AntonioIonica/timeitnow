@@ -25,8 +25,8 @@ const TaskEstimator = dynamic(() => import("@/components/AI/TaskEstimator"), {
 });
 
 // Pomodoro classic values * 60 to be transformed into seconds
-const WORK_DURATION = 90 * 60;
-const BREAK_DURATION = 20 * 60;
+const WORK_DURATION = 25 * 60;
+const BREAK_DURATION = 5 * 60;
 
 export default function Home() {
   const { tasks, completeTask } = useTaskEstimation();
@@ -41,14 +41,14 @@ export default function Home() {
     useSounds();
   const { changeBackground } = useBackground();
 
-  const [totalSessions, setTotalSessions] = useState(1);
-  const [currentSession, setCurrentSession] = useState(1);
-  const [totalTimeLeft, setTotalTimeLeft] = useState(WORK_DURATION);
+  const [totalSessions, setTotalSessions] = useState<number>(1);
+  const [currentSession, setCurrentSession] = useState<number>(1);
+  const [totalTimeLeft, setTotalTimeLeft] = useState<number>(WORK_DURATION);
 
-  const [timeLeft, setTimeLeft] = useState(WORK_DURATION);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number>(WORK_DURATION);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isBreak, setIsBreak] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
   const [dailyStreak, setDailyStreak] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const savedStreak = localStorage.getItem("dailyStreak");
@@ -240,15 +240,16 @@ export default function Home() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
 
-  function handleStart() {
+  function handleStart(): void {
     setIsRunning(true);
     playSound(clickSound);
   }
 
-  function handlePause() {
+  function handlePause():void {
     setIsRunning(false);
     playSound(typingSound);
   }
+  
   const totalTimeProgress =
     estimatedTime !== 0 && estimatedTime < WORK_DURATION
       ? estimatedTime

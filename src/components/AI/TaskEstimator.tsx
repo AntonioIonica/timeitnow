@@ -13,8 +13,8 @@ export interface Task {
 }
 
 export default function TaskEstimator() {
-  const [taskInput, setTaskInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [taskInput, setTaskInput] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { tasks, activeTaskIndex, addTask, completeTask, deleteTask } =
     useTaskEstimation();
   const { typingSound } = useSounds();
@@ -63,7 +63,7 @@ export default function TaskEstimator() {
   return (
     <div className="relative w-full rounded-2xl bg-white/20 p-6 shadow-md backdrop-blur-sm">
       <span className="transformation absolute -left-5 -top-2 -rotate-12 rounded-xl bg-white/30 px-2 text-lg font-semibold text-blue-500 backdrop-blur-sm duration-75 hover:-rotate-6 hover:scale-105">
-        Powered by Gemini AI
+        Powered by AI
       </span>
       <h2 className="mb-4 text-2xl font-bold text-slate-100">
         Task scheduler:

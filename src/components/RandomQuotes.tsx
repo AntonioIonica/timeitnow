@@ -11,7 +11,7 @@ const defaultQuote = [
 ];
 
 function RandomQuotes() {
-  const [quote, setQuote] = useState(defaultQuote[0]);
+  const [quote, setQuote] = useState<Record<string, string>>(defaultQuote[0]);
 
   useEffect(() => {
     async function fetchData() {
